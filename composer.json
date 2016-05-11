@@ -12,9 +12,17 @@
         "guzzlehttp/guzzle": "~6.0"
     },
     "autoload": {
-        "psr-0": {
-            "Formandsystem\\Api": "src/"
+        "psr-4": {
+            "Formandsystem\\Api\\": "src/"
         }
+    },
+    "autoload-dev": {
+    "psr-4": {
+        "Formandsystem\\Api\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "minimum-stability": "stable",
     "require-dev": {
