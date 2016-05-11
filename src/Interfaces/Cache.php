@@ -28,7 +28,16 @@ interface Cache{
      * @param  \DateTime|int  $minutes
      * @return void
      */
-    public function put($key, $value);
+    public function put($key, $value, $minutes);
+
+    /**
+     * Store an item in the cache indefinitely.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function forever($key, $value);
 
     /**
      * Remove an item from the cache.
