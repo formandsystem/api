@@ -37,7 +37,7 @@ class Api{
      */
     public function get($endpoint){
         // prepare endpoint string
-        $endpoint = '/'.trim($endpoint, '/');
+        $endpoint = $this->prepareEndpoint($endpoint);
         // send request
         $response = $this->parseResponse($this->client->get($endpoint, [
             'headers' => array_merge([
@@ -49,17 +49,59 @@ class Api{
         return $response;
     }
 
-    public function post(){
-
+    public function post($endpoint, $body){
+        // prepare endpoint string
+        $endpoint = $this->prepareEndpoint($endpoint);
+        // send request
+        $response = $this->parseResponse($this->client->post($endpoint, [
+            'headers' => array_merge([
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
+            ], []),
+            'body' => json_encode([
+                'data' => $body
+            ]),
+        ]));
+        // return response
+        return $response;
     }
-    public function patch(){
-
+    public function patch($endpoint, $body){
+        // prepare endpoint string
+        $endpoint = $this->prepareEndpoint($endpoint);
+        // send request
+        $response = $this->parseResponse($this->client->patch($endpoint, [
+            'headers' => array_merge([
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
+            ], []),
+            'body' => json_encode([
+                'data' => $body
+            ]),
+        ]));
+        // return response
+        return $response;
     }
     public function put(){
 
     }
-    public function delete(){
-
+    public function delete($endpoint, $body = FALSE){
+        // prepare endpoint string
+        $endpoint = $this->prepareEndpoint($endpoint);
+        // prepare data
+        $delete_data['headers'] = array_merge([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
+        ], []);
+        // add body if set
+        if($body !== FALSE){
+            $delete_data['body'] = json_encode([
+                'data' => $body
+            ]);
+        }
+        // send request
+        $response = $this->parseResponse($this->client->delete($endpoint, $delete_data));
+        // return response
+        return $response;
     }
     /**
      * get and cache an access token
@@ -121,5 +163,21 @@ class Api{
         if(isset($json['error'])){
             return $json['error'];
         }
+    }
+    /**
+     * preapre an enpoint url for api requests
+     *
+     * @method prepareEndopint
+     *
+     * @param  string          $endpoint
+     *
+     * @return string
+     */
+    public function prepareEndpoint($endpoint)
+    {
+        // remove base url
+        $endpoint = str_replace($this->config['url'],'',$endpoint);
+        // remove slashes
+        return '/'.trim($endpoint, '/');
     }
 }
