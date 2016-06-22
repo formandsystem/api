@@ -48,7 +48,16 @@ class Api{
         // return response
         return $response;
     }
-
+    /**
+     * send a post request to the specified endpoint
+     *
+     * @method post
+     *
+     * @param  string $endpoint [description]
+     * @param  array $body     [description]
+     *
+     * @return response object
+     */
     public function post($endpoint, $body){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
@@ -65,6 +74,16 @@ class Api{
         // return response
         return $response;
     }
+    /**
+     * send a patch request to the specified endpoint
+     *
+     * @method patch
+     *
+     * @param  string $endpoint [description]
+     * @param  array $body     [description]
+     *
+     * @return response object
+     */
     public function patch($endpoint, $body){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
@@ -81,9 +100,42 @@ class Api{
         // return response
         return $response;
     }
-    public function put(){
-
+    /**
+     * send a put request to the specified endpoint
+     *
+     * @method put
+     *
+     * @param  string $endpoint [description]
+     * @param  array $body     [description]
+     *
+     * @return response object
+     */
+    public function put($endpoint, $body = FALSE){
+        // prepare endpoint string
+        $endpoint = $this->prepareEndpoint($endpoint);
+        // send request
+        $response = $this->parseResponse($this->client->put($endpoint, [
+            'headers' => array_merge([
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
+            ], []),
+            'body' => json_encode([
+                'data' => $body
+            ]),
+        ]));
+        // return response
+        return $response;
     }
+    /**
+     * send a delete request to the specified endpoint
+     *
+     * @method delete
+     *
+     * @param  string $endpoint [description]
+     * @param  array $body     [description]
+     *
+     * @return response object
+     */
     public function delete($endpoint, $body = FALSE){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
