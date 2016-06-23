@@ -35,7 +35,7 @@ class Api{
      *
      * @return array
      */
-    public function get($endpoint){
+    public function get($endpoint, $headers = []){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
         // send request
@@ -43,7 +43,7 @@ class Api{
             'headers' => array_merge([
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
-            ], []),
+            ], $headers),
         ]));
         // return response
         return $response;
@@ -58,7 +58,7 @@ class Api{
      *
      * @return response object
      */
-    public function post($endpoint, $body){
+    public function post($endpoint, $body, $headers = []){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
         // send request
@@ -66,7 +66,7 @@ class Api{
             'headers' => array_merge([
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
-            ], []),
+            ], $headers),
             'body' => json_encode([
                 'data' => $body
             ]),
@@ -84,7 +84,7 @@ class Api{
      *
      * @return response object
      */
-    public function patch($endpoint, $body){
+    public function patch($endpoint, $body, $headers = []){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
         // send request
@@ -92,7 +92,7 @@ class Api{
             'headers' => array_merge([
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
-            ], []),
+            ], $headers),
             'body' => json_encode([
                 'data' => $body
             ]),
@@ -110,7 +110,7 @@ class Api{
      *
      * @return response object
      */
-    public function put($endpoint, $body = FALSE){
+    public function put($endpoint, $body = FALSE, $headers = []){
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
         // send request
@@ -118,7 +118,7 @@ class Api{
             'headers' => array_merge([
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer '.$this->access_token($this->config['scopes'])
-            ], []),
+            ], $headers),
             'body' => json_encode([
                 'data' => $body
             ]),
