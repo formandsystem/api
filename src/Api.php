@@ -3,11 +3,11 @@
 namespace Formandsystem\Api;
 
 use Formandsystem\Api\Interfaces\Cache as CacheInterface;
-use GuzzleHttp\Client as Guzzle;
+use GuzzleHttp;
 
 class Api{
 
-    public function __construct($config, CacheInterface $cache)
+    public function __construct($config, CacheInterface $cache, $debugBar = NULL)
     {
         // merge config data
         $this->config = array_merge([
@@ -21,10 +21,41 @@ class Api{
         // get cache implementation
         $this->cache = $cache;
         // setup client
-        $this->client = new Guzzle([
+        $this->client = $this->newClient([
             'base_uri' => $this->config['url'],
             'exceptions' => false,
-        ]);
+        ], $debugBar);
+    }
+    /**
+     * create new client
+     *
+     * @method newClient
+     *
+     * @param  array    $opts     [description]
+     * @param  Barryvdh\Debugbar\LaravelDebugbar    $debugBar [description]
+     *
+     * @return GuzzleHttp\Client
+     */
+    public function newClient($opts = [], $debugBar = NULL)
+    {
+        $handler = [];
+        if(is_a($debugBar, 'Barryvdh\Debugbar\LaravelDebugbar')){
+            $debugBar = $debugBar;
+            // Get data collector.
+            $timeline = $debugBar->getCollector('time');
+            // Wrap the timeline.
+            $profiler = new GuzzleHttp\Profiling\Debugbar\Profiler($timeline);
+            // Add the middleware to the stack
+            $stack = GuzzleHttp\HandlerStack::create();
+            $stack->unshift(new GuzzleHttp\Profiling\Middleware($profiler));
+
+            $handler = ['handler' => $stack];
+        }
+        // New up the client with this handler stack.
+        return new GuzzleHttp\Client(array_merge(
+            $handler,
+            $opts
+        ));
     }
     /**
      * send a get request to the specified endpoint
