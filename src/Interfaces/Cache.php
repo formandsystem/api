@@ -2,11 +2,13 @@
 
 namespace Formandsystem\Api\Interfaces;
 
-interface Cache{
+interface Cache
+{
     /**
      * Determine if an item exists in the cache.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return bool
      */
     public function has($key);
@@ -14,8 +16,9 @@ interface Cache{
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param  string  $key
-     * @param  mixed   $default
+     * @param string $key
+     * @param mixed  $default
+     *
      * @return mixed
      */
     public function get($key);
@@ -23,9 +26,10 @@ interface Cache{
     /**
      * Store an item in the cache.
      *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @param  \DateTime|int  $minutes
+     * @param string        $key
+     * @param mixed         $value
+     * @param \DateTime|int $minutes
+     *
      * @return void
      */
     public function put($key, $value, $minutes);
@@ -33,8 +37,9 @@ interface Cache{
     /**
      * Store an item in the cache indefinitely.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function forever($key, $value);
@@ -42,7 +47,8 @@ interface Cache{
     /**
      * Remove an item from the cache.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return bool
      */
     public function forget($key);
