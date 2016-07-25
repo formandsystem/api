@@ -261,6 +261,6 @@ class Api{
         // remove base url
         $endpoint = str_replace($this->config['url'],'',$endpoint);
         // remove slashes
-        return '/'.trim($endpoint, '/');
+        return '/'.ltrim($endpoint, '/');
     }
 }
