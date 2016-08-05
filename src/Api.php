@@ -149,8 +149,13 @@ class Api
      *
      * @return response object
      */
-    public function put($endpoint, $body = false, $headers = [])
+    public function put($endpoint, $body = false, $headers = [], $json = true)
     {
+        if($json === true){
+            $body = json_encode([
+                'data' => $body,
+            ]);
+        }
         // prepare endpoint string
         $endpoint = $this->prepareEndpoint($endpoint);
         // send request
@@ -159,9 +164,7 @@ class Api
                 'Accept'        => 'application/json',
                 'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
             ], $headers),
-            'body' => json_encode([
-                'data' => $body,
-            ]),
+            'body' => $body
         ]));
         // return response
         return $response;
