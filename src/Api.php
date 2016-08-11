@@ -2,7 +2,6 @@
 
 namespace Formandsystem\Api;
 
-use Formandsystem\Api\Config;
 use Formandsystem\Api\Interfaces\Cache as CacheInterface;
 use GuzzleHttp;
 
@@ -147,7 +146,7 @@ class Api
      */
     public function put($endpoint, $body = false, $headers = [], $json = true)
     {
-        if($json === true){
+        if ($json === true) {
             $body = json_encode([
                 'data' => $body,
             ]);
@@ -160,7 +159,7 @@ class Api
                 'Accept'        => 'application/json',
                 'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
             ], $headers),
-            'body' => $body
+            'body' => $body,
         ]));
         // return response
         return $response;
@@ -276,6 +275,6 @@ class Api
     protected function prepareEndpoint($endpoint)
     {
         // remove slashes
-        return rtrim($this->config->url,'/').'/'.ltrim($endpoint, '/');
+        return rtrim($this->config->url, '/').'/'.ltrim($endpoint, '/');
     }
 }

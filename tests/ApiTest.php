@@ -1,9 +1,9 @@
 <?php
-use PHPUnit\Framework\TestCase;
+
 use Formandsystem\Api\Api;
-use Formandsystem\Api\Config;
 use Formandsystem\Api\Cache\NullCache;
-use Psr\Http\Message\ResponseInterface;
+use Formandsystem\Api\Config;
+use PHPUnit\Framework\TestCase;
 
 class ApiTest extends TestCase
 {
@@ -24,7 +24,7 @@ class ApiTest extends TestCase
         ]);
 
         $api = new Api($config, new NullCache(), new GuzzleHttp\Client([
-            'exceptions' => false
+            'exceptions' => false,
         ]));
 
         $this->assertInstanceOf(Api::class, $api);
@@ -45,7 +45,7 @@ class ApiTest extends TestCase
         $client = Mockery::mock('GuzzleHttp\Client');
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
 
-        $client->shouldReceive('post')->times(1)->with($config->url.'/tokens',[
+        $client->shouldReceive('post')->times(1)->with($config->url.'/tokens', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -59,18 +59,18 @@ class ApiTest extends TestCase
 
         $response->shouldReceive('getBody')->andReturn(json_encode([
             'data' => [
-                'id' => $token,
+                'id'         => $token,
                 'attributes' => [
-                    'expires_in' => time() + 3600 // now + 1h
-                ]
-            ]
+                    'expires_in' => time() + 3600, // now + 1h
+                ],
+            ],
         ]));
 
         $client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/test', [
             'headers' => [
                 'Accept'        => 'application/json',
                 'Authorization' => 'Bearer '.$token,
-            ]
+            ],
         ])->andReturn($response);
 
         $api = new Api($config, new NullCache(), $client);

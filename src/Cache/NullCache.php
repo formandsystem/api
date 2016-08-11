@@ -6,7 +6,6 @@ use Formandsystem\Api\Interfaces\Cache as CacheInterface;
 
 class NullCache implements CacheInterface
 {
-
     public function has($key)
     {
         return false;
