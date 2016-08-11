@@ -1,6 +1,7 @@
 <?php
-use PHPUnit\Framework\TestCase;
+
 use Formandsystem\Api\Config;
+use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
@@ -27,7 +28,7 @@ class ConfigTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $config = new Config([
-            'url'           => NULL,
+            'url'           => null,
             'version'       => 1,
             'client_id'     => '1234-12344-1231231',
             'client_secret' => '1234-12344-1231231',
@@ -54,7 +55,7 @@ class ConfigTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $config = new Config([
             'url'           => 'http://api.formandsystem.com',
-            'version'       => NULL,
+            'version'       => null,
             'client_id'     => '1234-12344-1231231',
             'client_secret' => '1234-12344-1231231',
             'cache'         => true,
@@ -81,7 +82,7 @@ class ConfigTest extends TestCase
         $config = new Config([
             'url'           => 'http://api.formandsystem.com',
             'version'       => 1,
-            'client_id'     => NULL,
+            'client_id'     => null,
             'client_secret' => '1234-12344-1231231',
             'cache'         => true,
             'scopes'        => ['content.get'],
@@ -108,7 +109,7 @@ class ConfigTest extends TestCase
             'url'           => 'http://api.formandsystem.com',
             'version'       => 1,
             'client_id'     => '1234-12344-1231231',
-            'client_secret' => NULL,
+            'client_secret' => null,
             'cache'         => true,
             'scopes'        => ['content.get'],
         ]);
@@ -135,7 +136,7 @@ class ConfigTest extends TestCase
             'version'       => 1,
             'client_id'     => '1234-12344-1231231',
             'client_secret' => '1234-12344-1231231',
-            'cache'         => NULL,
+            'cache'         => null,
             'scopes'        => ['content.get'],
         ]);
     }
@@ -162,7 +163,7 @@ class ConfigTest extends TestCase
             'client_id'     => '1234-12344-1231231',
             'client_secret' => '1234-12344-1231231',
             'cache'         => false,
-            'scopes'        => NULL,
+            'scopes'        => null,
         ]);
     }
 
