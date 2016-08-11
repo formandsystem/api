@@ -27,7 +27,7 @@
     "minimum-stability": "stable",
     "require-dev": {
         "fzaninotto/faker": "~1.0",
-        "phpspec/phpspec": "2.0.*@dev",
-        "mockery/mockery": "0.9.*@dev"
+        "mockery/mockery": "0.9.*@dev",
+        "phpunit/phpunit": "^5.5"
     }
 }

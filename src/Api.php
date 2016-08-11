@@ -2,29 +2,25 @@
 
 namespace Formandsystem\Api;
 
+use Formandsystem\Api\Config;
 use Formandsystem\Api\Interfaces\Cache as CacheInterface;
 use GuzzleHttp;
 
 class Api
 {
-    public function __construct($config, CacheInterface $cache, $debugBar = null)
+    public function __construct(Config $config, CacheInterface $cache = NULL, GuzzleHttp\Client $guzzleClient)
     {
         // merge config data
-        $this->config = array_merge([
-            'url'           => 'http://api.formandsystem.app',
-            'version'       => '1',
-            'client_id'     => null,
-            'client_secret' => null,
-            'cache'         => true,
-            'scopes'        => ['content.get'],
-        ], $config);
+        $this->config = $config;
         // get cache implementation
         $this->cache = $cache;
+        // get cache implementation
+        $this->guzzleClient = $guzzleClient;
         // setup client
-        $this->client = $this->newClient([
-            'base_uri'   => $this->config['url'],
-            'exceptions' => false,
-        ], $debugBar);
+        // $this->client = $this->newClient([
+        //     'base_uri'   => $this->config->url,
+        //     'exceptions' => false,
+        // ], $debugBar);
     }
 
     /**
@@ -76,7 +72,7 @@ class Api
         $response = $this->parseResponse($this->client->get($endpoint, [
             'headers' => array_merge([
                 'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
+                'Authorization' => 'Bearer '.$this->access_token($this->config->scopes),
             ], $headers),
         ]));
         // return response
@@ -233,14 +229,14 @@ class Api
                 // convert timestamp to DateTime
                 $date = new \DateTime('@'.$response['data']['attributes']['expires_in']);
                 // cache token
-                $this->cache->put('access_token'.$this->config['client_id'], [
+                $this->cache->put('access_token'.$this->config->client_id, [
                     'token'  => $response['data']['id'],
                     'scopes' => $scopes,
                 ], $date);
             }
         }
         // return token from cache
-        return $this->cache->get('access_token'.$this->config['client_id'])['token'];
+        return $this->cache->get('access_token'.$this->config->client_id)['token'];
     }
 
     /**
@@ -275,10 +271,10 @@ class Api
      *
      * @return string
      */
-    public function prepareEndpoint($endpoint)
+    protected function prepareEndpoint($endpoint)
     {
         // remove base url
-        $endpoint = str_replace($this->config['url'], '', $endpoint);
+        $endpoint = str_replace($this->config->url, '', $endpoint);
         // remove slashes
         return '/'.ltrim($endpoint, '/');
     }
