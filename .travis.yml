@@ -21,9 +21,8 @@ install:
 
 script:
   - mkdir -p build/logs
-  - if [ "$EXECUTE_COVERAGE" != "true" ]; then phpunit; fi
-  - if [ "$EXECUTE_COVERAGE" == "true" ]; then phpunit --coverage-clover build/logs/clover.xml; fi
-  - if [ "$EXECUTE_COVERAGE" == "true" ]; then vendor/bin/php-cs-fixer fix -v --diff --dry-run; fi
+  - if [ "$EXECUTE_COVERAGE" != "true" ]; then composer test; fi
+  - if [ "$EXECUTE_COVERAGE" == "true" ]; then composer run travis; fi
 
 after_script:
   - php vendor/bin/coveralls -v

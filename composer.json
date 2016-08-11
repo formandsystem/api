@@ -22,7 +22,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "travis": "phpunit --coverage-clover build/logs/clover.xml"
     },
     "minimum-stability": "stable",
     "require-dev": {
