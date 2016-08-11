@@ -8,14 +8,14 @@ use GuzzleHttp;
 
 class Api
 {
-    public function __construct(Config $config, CacheInterface $cache = NULL, GuzzleHttp\Client $guzzleClient)
+    public function __construct(Config $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient)
     {
         // merge config data
         $this->config = $config;
         // get cache implementation
         $this->cache = $cache;
         // get cache implementation
-        $this->guzzleClient = $guzzleClient;
+        $this->client = $guzzleClient;
         // setup client
         // $this->client = $this->newClient([
         //     'base_uri'   => $this->config->url,
@@ -209,34 +209,36 @@ class Api
     protected function access_token($scopes)
     {
         // check if token is cached
-        if (!$this->cache->has('access_token'.$this->config['client_id']) || count(array_diff($scopes, $this->cache->get('access_token'.$this->config['client_id'])['scopes'])) > 0) {
-            // get access token
-            $response = $this->parseResponse(
-                $this->client->post('/tokens', [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
-                    'form_params' => [
-                        'grant_type'    => 'client_credentials',
-                        'client_id'     => $this->config['client_id'],
-                        'client_secret' => $this->config['client_secret'],
-                        'scope'         => implode(',', array_map('trim', $scopes)),
-                    ],
-                ])
-            );
-            // cache access token
-            if (isset($response['data'])) {
-                // convert timestamp to DateTime
-                $date = new \DateTime('@'.$response['data']['attributes']['expires_in']);
-                // cache token
-                $this->cache->put('access_token'.$this->config->client_id, [
-                    'token'  => $response['data']['id'],
-                    'scopes' => $scopes,
-                ], $date);
-            }
+        if ($this->cache->has('access_token'.$this->config->client_id) && count(array_diff($scopes, $this->cache->get('access_token'.$this->config->client_id)['scopes'])) === 0) {
+            // return token from cache
+            return $this->cache->get('access_token'.$this->config->client_id)['token'];
+        }
+        // get access token
+        $response = $this->parseResponse(
+            $this->client->post($this->prepareEndpoint('/tokens'), [
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+                'form_params' => [
+                    'grant_type'    => 'client_credentials',
+                    'client_id'     => $this->config->client_id,
+                    'client_secret' => $this->config->client_secret,
+                    'scope'         => implode(',', array_map('trim', $scopes)),
+                ],
+            ])
+        );
+        // cache access token
+        if (isset($response['data'])) {
+            // convert timestamp to DateTime
+            $date = new \DateTime('@'.$response['data']['attributes']['expires_in']);
+            // cache token
+            $this->cache->put('access_token'.$this->config->client_id, [
+                'token'  => $response['data']['id'],
+                'scopes' => $scopes,
+            ], $date);
         }
         // return token from cache
-        return $this->cache->get('access_token'.$this->config->client_id)['token'];
+        return $response['data']['id'];
     }
 
     /**
@@ -273,9 +275,7 @@ class Api
      */
     protected function prepareEndpoint($endpoint)
     {
-        // remove base url
-        $endpoint = str_replace($this->config->url, '', $endpoint);
         // remove slashes
-        return '/'.ltrim($endpoint, '/');
+        return rtrim($this->config->url,'/').'/'.ltrim($endpoint, '/');
     }
 }
