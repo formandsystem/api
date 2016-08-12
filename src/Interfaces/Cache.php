@@ -30,7 +30,6 @@ interface Cache
      * @param mixed         $value
      * @param \DateTime|int $minutes
      *
-     * @return void
      */
     public function put($key, $value, $minutes);
 
@@ -40,7 +39,6 @@ interface Cache
      * @param string $key
      * @param mixed  $value
      *
-     * @return void
      */
     public function forever($key, $value);
 

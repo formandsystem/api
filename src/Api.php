@@ -7,7 +7,7 @@ use GuzzleHttp;
 
 class Api
 {
-    public function __construct(Array $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient)
+    public function __construct(array $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient)
     {
         // merge config data
         $this->config = new Config($config);

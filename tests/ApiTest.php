@@ -12,7 +12,8 @@ class ApiTest extends TestCase
     protected $client;
     protected $response;
 
-    public function setUp(){
+    public function setUp()
+    {
         $this->token = '123456789';
         $this->client = Mockery::mock('GuzzleHttp\Client');
 
@@ -30,7 +31,8 @@ class ApiTest extends TestCase
         Mockery::close();
     }
 
-    public function apiToken(){
+    public function apiToken()
+    {
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
 
         $this->client->shouldReceive('post')->times(1)->with($this->config->url.'/tokens', [
@@ -57,7 +59,6 @@ class ApiTest extends TestCase
 
     public function testInitApi()
     {
-
         $api = new Api($this->config->toArray(), new NullCache(), new GuzzleHttp\Client([
             'exceptions' => false,
         ]));
@@ -71,7 +72,7 @@ class ApiTest extends TestCase
         $this->apiToken();
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
         $response->shouldReceive('getBody')->times(1)->andReturn(json_encode([
-            'data' => []
+            'data' => [],
         ]));
         // real test
         $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/testToGetToken', [
@@ -95,7 +96,7 @@ class ApiTest extends TestCase
             'attributes' => [
                 'name' => 'name',
                 'slug' => 'slug',
-            ]
+            ],
         ];
         // real test
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
@@ -122,8 +123,8 @@ class ApiTest extends TestCase
         // Mock API Token stuff
         $this->apiToken();
         $responseData['error'] = [
-            "message" => "Check your client id and client secret or you access token.",
-            "status_code" => 403,
+            'message' => 'Check your client id and client secret or you access token.',
+            'status_code' => 403,
         ];
         // real test
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
