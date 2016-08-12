@@ -23,6 +23,7 @@
     },
     "scripts": {
         "test": "phpunit; vendor/bin/php-cs-fixer fix -v --diff --dry-run;",
+        "php-fix": "vendor/bin/php-cs-fixer fix -v --diff;",
         "travis": "phpunit --coverage-clover build/logs/clover.xml"
     },
     "minimum-stability": "stable",

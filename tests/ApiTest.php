@@ -26,6 +26,7 @@ class ApiTest extends TestCase
             'scopes'        => ['content.get'],
         ]);
     }
+    
     public function tearDown()
     {
         Mockery::close();
@@ -123,7 +124,7 @@ class ApiTest extends TestCase
         // Mock API Token stuff
         $this->apiToken();
         $responseData['error'] = [
-            'message' => 'Check your client id and client secret or you access token.',
+            'message'     => 'Check your client id and client secret or you access token.',
             'status_code' => 403,
         ];
         // real test

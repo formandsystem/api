@@ -8,9 +8,11 @@ return Symfony\CS\Config\Config::create()
         'remove_lines_between_uses',
         'remove_leading_slash_use',
         'phpdoc_no_empty_return',
+        'phpdoc_trim',
         'phpdoc_params',
         'phpdoc_to_comment',
         'phpdoc_order',
+        'align_double_arrow',
         'short_array_syntax',
         'single_array_no_trailing_comma',
         'multiline_array_trailing_comma',
@@ -19,6 +21,7 @@ return Symfony\CS\Config\Config::create()
         'ternary_spaces',
         'operators_spaces',
         'new_with_braces',
+        'function_declaration',
     ])
     ->finder(
         Symfony\CS\Finder\DefaultFinder::create()
