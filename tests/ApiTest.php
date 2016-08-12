@@ -26,7 +26,7 @@ class ApiTest extends TestCase
             'scopes'        => ['content.get'],
         ]);
     }
-    
+
     public function tearDown()
     {
         Mockery::close();
