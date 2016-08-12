@@ -30,6 +30,7 @@
         "fzaninotto/faker": "~1.0",
         "mockery/mockery": "0.9.*@dev",
         "phpunit/phpunit": "^5.5",
-        "friendsofphp/php-cs-fixer": "^1.11"
+        "friendsofphp/php-cs-fixer": "^1.11",
+        "satooshi/php-coveralls": "^1.0"
     }
 }

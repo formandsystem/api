@@ -7,51 +7,14 @@ use GuzzleHttp;
 
 class Api
 {
-    public function __construct(Config $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient)
+    public function __construct(Array $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient)
     {
         // merge config data
-        $this->config = $config;
+        $this->config = new Config($config);
         // get cache implementation
         $this->cache = $cache;
         // get cache implementation
         $this->client = $guzzleClient;
-        // setup client
-        // $this->client = $this->newClient([
-        //     'base_uri'   => $this->config->url,
-        //     'exceptions' => false,
-        // ], $debugBar);
-    }
-
-    /**
-     * create new client.
-     *
-     * @method newClient
-     *
-     * @param array                             $opts     [description]
-     * @param Barryvdh\Debugbar\LaravelDebugbar $debugBar [description]
-     *
-     * @return GuzzleHttp\Client
-     */
-    public function newClient($opts = [], $debugBar = null)
-    {
-        $handler = [];
-        if (is_a($debugBar, 'Barryvdh\Debugbar\LaravelDebugbar')) {
-            $debugBar = $debugBar;
-            // Get data collector.
-            $timeline = $debugBar->getCollector('time');
-            // Wrap the timeline.
-            $profiler = new GuzzleHttp\Profiling\Debugbar\Profiler($timeline);
-            // Add the middleware to the stack
-            $stack = GuzzleHttp\HandlerStack::create();
-            $stack->unshift(new GuzzleHttp\Profiling\Middleware($profiler));
-
-            $handler = ['handler' => $stack];
-        }
-        // New up the client with this handler stack.
-        return new GuzzleHttp\Client(array_merge(
-            $handler,
-            $opts
-        ));
     }
 
     /**
@@ -258,9 +221,7 @@ class Api
             return $json;
         }
         // check for error
-        if (isset($json['error'])) {
-            return $json['error'];
-        }
+        throw new \ErrorException($json['error']['message'], $json['error']['status_code']);
     }
 
     /**
