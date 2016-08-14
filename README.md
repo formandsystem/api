@@ -3,6 +3,7 @@
 [![Build Status](https://img.shields.io/travis/formandsystem/api.svg?style=flat-square)](https://travis-ci.org/formandsystem/api)
 [![Build Status](https://img.shields.io/coveralls/formandsystem/api.svg?style=flat-square)](https://coveralls.io/github/formandsystem/api)
 [![StyleCI](https://styleci.io/repos/58487596/shield?branch=master)](https://styleci.io/repos/58487596)
+
 # Form&System API
 API wrapper for the Form&amp;System CMS
 

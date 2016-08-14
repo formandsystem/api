@@ -59,7 +59,7 @@ class Api
         $response = $this->parseResponse($this->client->post($endpoint, [
             'headers' => array_merge([
                 'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
+                'Authorization' => 'Bearer '.$this->access_token($this->config->scopes),
             ], $headers),
             'body' => json_encode([
                 'data' => $body,
@@ -216,12 +216,12 @@ class Api
     {
         // decode response
         $json = json_decode($response->getBody(), true);
-        // check for data
-        if (isset($json['data'])) {
-            return $json;
-        }
         // check for error
-        throw new \ErrorException($json['error']['message'], $json['error']['status_code']);
+        if (isset($json['error'])) {
+            throw new \ErrorException($json['error']['message'], $json['error']['status_code']);
+        }
+        // else return data
+        return $json;
     }
 
     /**
@@ -235,7 +235,6 @@ class Api
      */
     protected function prepareEndpoint($endpoint)
     {
-        // remove slashes
         return rtrim($this->config->url, '/').'/'.ltrim($endpoint, '/');
     }
 }

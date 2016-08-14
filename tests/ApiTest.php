@@ -145,4 +145,113 @@ class ApiTest extends TestCase
 
         $this->assertEquals($responseData, $result);
     }
+
+    public function testPost()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+        $data = [
+            'type'       => 'collections',
+            'attributes' => [
+                'name' => 'name',
+                'slug' => 'slug',
+                'type' => 'pages',
+            ],
+        ];
+        
+        $responseData['data'] = [
+            'type'       => 'collections',
+            'id'         => '110790d5-5179-4332-9c85-c8b03d8d1750',
+            'attributes' => [
+                'name'       => 'name',
+                'slug'       => 'slug',
+                'type'       => 'pages',
+                'position'   => null,
+                'is_trashed' => false,
+            ],
+            'links' =>
+            [
+                'self' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750',
+            ],
+            'relationships' =>
+            [
+                'pages' =>
+                    [
+                        'links' =>
+                            [
+                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/pages',
+                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/pages',
+                            ],
+                        'data' =>
+                            [
+                            ],
+                    ],
+                'ownedByPages' =>
+                    [
+                        'links' =>
+                            [
+                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByPages',
+                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByPages',
+                            ],
+
+                    ],
+                'collections' =>
+                    [
+                        'links' =>
+                            [
+                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/collections',
+                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/collections',
+                            ],
+                    ],
+                'ownedByCollections' =>
+                    [
+                        'links' =>
+                            [
+                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByCollections',
+                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByCollections',
+                            ],
+                    ],
+                'fragments' =>
+                    [
+                        'links' =>
+                            [
+                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/fragments',
+                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/fragments',
+                            ],
+                        'data' =>
+                            [
+                            ],
+                    ],
+                'ownedByFragments' =>
+                    [
+                        'links' =>
+                            [
+                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByFragments',
+                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByFragments',
+                            ],
+                    ],
+            ],
+        ];
+
+        // real test
+        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode(
+            $responseData
+        ));
+
+        $this->client->shouldReceive('post')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => [
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$this->token,
+            ],
+            'body' => json_encode([
+                'data' => $data,
+            ]),
+        ])->andReturn($response);
+
+        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
+        $result = $api->post('/collections', $data);
+
+        $this->assertEquals($responseData, $result);
+    }
 }
