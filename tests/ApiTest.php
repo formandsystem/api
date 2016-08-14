@@ -158,7 +158,7 @@ class ApiTest extends TestCase
                 'type' => 'pages',
             ],
         ];
-        
+
         $responseData['data'] = [
             'type'       => 'collections',
             'id'         => '110790d5-5179-4332-9c85-c8b03d8d1750',
@@ -169,67 +169,50 @@ class ApiTest extends TestCase
                 'position'   => null,
                 'is_trashed' => false,
             ],
-            'links' =>
-            [
+            'links' => [
                 'self' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750',
             ],
-            'relationships' =>
-            [
-                'pages' =>
-                    [
-                        'links' =>
-                            [
-                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/pages',
-                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/pages',
-                            ],
-                        'data' =>
-                            [
-                            ],
+            'relationships' => [
+                'pages' => [
+                    'links' => [
+                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/pages',
+                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/pages',
                     ],
-                'ownedByPages' =>
-                    [
-                        'links' =>
-                            [
-                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByPages',
-                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByPages',
-                            ],
-
+                    'data' => [
                     ],
-                'collections' =>
-                    [
-                        'links' =>
-                            [
-                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/collections',
-                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/collections',
-                            ],
+                ],
+                'ownedByPages' => [
+                    'links' => [
+                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByPages',
+                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByPages',
                     ],
-                'ownedByCollections' =>
-                    [
-                        'links' =>
-                            [
-                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByCollections',
-                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByCollections',
-                            ],
+                ],
+                'collections' => [
+                    'links' => [
+                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/collections',
+                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/collections',
                     ],
-                'fragments' =>
-                    [
-                        'links' =>
-                            [
-                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/fragments',
-                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/fragments',
-                            ],
-                        'data' =>
-                            [
-                            ],
+                ],
+                'ownedByCollections' => [
+                    'links' => [
+                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByCollections',
+                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByCollections',
                     ],
-                'ownedByFragments' =>
-                    [
-                        'links' =>
-                            [
-                                'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByFragments',
-                                'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByFragments',
-                            ],
+                ],
+                'fragments' => [
+                    'links' => [
+                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/fragments',
+                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/fragments',
                     ],
+                    'data' => [
+                    ],
+                ],
+                'ownedByFragments' => [
+                    'links' => [
+                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByFragments',
+                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByFragments',
+                    ],
+                ],
             ],
         ];
 
