@@ -87,6 +87,32 @@ class ApiTest extends TestCase
         $api->get('/testToGetToken');
     }
 
+    public function testAccessTokenCacheDifferentScope()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode([
+            'data' => [],
+        ]));
+        $cache = Mockery::mock('Formandsystem\Api\Interfaces\Cache');
+        $cache->shouldIgnoreMissing();
+        $cache->shouldReceive('has')->times(1)->andReturn(true);
+        $cache->shouldReceive('get')->times(1)->with('access_token'.$this->config->client_id)->andReturn([
+            'scopes' => ['client.delete'],
+        ]);
+        // real test
+        $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/testToGetToken', [
+            'headers' => [
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$this->token,
+            ],
+        ])->andReturn($response);
+
+        $api = new Api($this->config->toArray(), $cache, $this->client);
+        $api->get('/testToGetToken');
+    }
+
     public function testGet()
     {
         // Mock API Token stuff
@@ -244,22 +270,22 @@ class ApiTest extends TestCase
         // Mock API Token stuff
         $this->apiToken();
         $responseData['error'] = [
-            "message" => "Request data validation failed.",
-            "errors" => [
-              "data.type" => [
-                "The data.type field is required."
+            'message' => 'Request data validation failed.',
+            'errors'  => [
+              'data.type' => [
+                'The data.type field is required.',
               ],
-              "data.attributes.name" => [
-                "The data.attributes.name field is required."
+              'data.attributes.name' => [
+                'The data.attributes.name field is required.',
               ],
-              "data.attributes.slug" => [
-                "The data.attributes.slug field is required."
+              'data.attributes.slug' => [
+                'The data.attributes.slug field is required.',
               ],
-              "data.attributes.type" => [
-                "The data.attributes.type field is required."
-              ]
+                'data.attributes.type' => [
+                    'The data.attributes.type field is required.',
+                ],
             ],
-            "status_code" => 422
+            'status_code' => 422,
         ];
         // real test
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
@@ -274,7 +300,7 @@ class ApiTest extends TestCase
             ],
             'body' => json_encode([
                 'data' => [],
-            ])
+            ]),
         ])->andReturn($response);
 
         $api = new Api($this->config->toArray(), new NullCache(), $this->client);

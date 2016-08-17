@@ -46,7 +46,6 @@ return Symfony\CS\Config\Config::create()
         'no_spaces_inside_parenthesis',
         'no_tab_indentation',
         'no_trailing_comma_in_list_call',
-        'no_trailing_comma_in_singleline_array',
         'no_trailing_whitespace',
         'no_trailing_whitespace_in_comment',
         'no_unneeded_control_parentheses',

@@ -9,7 +9,8 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "humbug/humbug": "~1.0@dev"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +25,8 @@
     "scripts": {
         "test": "phpunit; vendor/bin/php-cs-fixer fix -v --diff --dry-run;",
         "php-fix": "vendor/bin/php-cs-fixer fix -v --diff;",
-        "travis": "phpunit --coverage-clover build/logs/clover.xml"
+        "travis": "phpunit --coverage-clover build/logs/clover.xml",
+        "humbug": "vendor/bin/humbug && vendor/bin/humbug stats --skip-killed=yes -vvv"
     },
     "minimum-stability": "stable",
     "require-dev": {
