@@ -99,7 +99,7 @@ class ApiTest extends TestCase
         $cache->shouldIgnoreMissing();
         $cache->shouldReceive('has')->times(1)->andReturn(true);
         $cache->shouldReceive('get')->times(1)->with('access_token'.$this->config->client_id)->andReturn([
-            'scopes' => ['client.delete']
+            'scopes' => ['client.delete'],
         ]);
         // real test
         $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/testToGetToken', [
@@ -283,7 +283,7 @@ class ApiTest extends TestCase
               ],
               'data.attributes.type' => [
                 'The data.attributes.type field is required.',
-              ]
+              ],
             ],
             'status_code' => 422,
         ];
