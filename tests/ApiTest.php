@@ -237,4 +237,49 @@ class ApiTest extends TestCase
 
         $this->assertEquals($responseData, $result);
     }
+
+    public function testPostError()
+    {
+        $this->expectException(ErrorException::class);
+        // Mock API Token stuff
+        $this->apiToken();
+        $responseData['error'] = [
+            "message" => "Request data validation failed.",
+            "errors" => [
+              "data.type" => [
+                "The data.type field is required."
+              ],
+              "data.attributes.name" => [
+                "The data.attributes.name field is required."
+              ],
+              "data.attributes.slug" => [
+                "The data.attributes.slug field is required."
+              ],
+              "data.attributes.type" => [
+                "The data.attributes.type field is required."
+              ]
+            ],
+            "status_code" => 422
+        ];
+        // real test
+        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode(
+            $responseData
+        ));
+
+        $this->client->shouldReceive('post')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => [
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$this->token,
+            ],
+            'body' => json_encode([
+                'data' => [],
+            ])
+        ])->andReturn($response);
+
+        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
+        $result = $api->post('/collections', []);
+
+        $this->assertEquals($responseData, $result);
+    }
 }
