@@ -87,6 +87,32 @@ class ApiTest extends TestCase
         $api->get('/testToGetToken');
     }
 
+    public function testAccessTokenCacheDifferentScope()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode([
+            'data' => [],
+        ]));
+        $cache = Mockery::mock('Formandsystem\Api\Interfaces\Cache');
+        $cache->shouldIgnoreMissing();
+        $cache->shouldReceive('has')->times(1)->andReturn(true);
+        $cache->shouldReceive('get')->times(1)->with('access_token'.$this->config->client_id)->andReturn([
+            'scopes' => ['client.delete']
+        ]);
+        // real test
+        $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/testToGetToken', [
+            'headers' => [
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$this->token,
+            ],
+        ])->andReturn($response);
+
+        $api = new Api($this->config->toArray(), $cache, $this->client);
+        $api->get('/testToGetToken');
+    }
+
     public function testGet()
     {
         // Mock API Token stuff
