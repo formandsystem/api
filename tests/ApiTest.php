@@ -244,22 +244,22 @@ class ApiTest extends TestCase
         // Mock API Token stuff
         $this->apiToken();
         $responseData['error'] = [
-            "message" => "Request data validation failed.",
-            "errors" => [
-              "data.type" => [
-                "The data.type field is required."
+            'message' => 'Request data validation failed.',
+            'errors'  => [
+              'data.type' => [
+                'The data.type field is required.'
               ],
-              "data.attributes.name" => [
-                "The data.attributes.name field is required."
+              'data.attributes.name' => [
+                'The data.attributes.name field is required.'
               ],
-              "data.attributes.slug" => [
-                "The data.attributes.slug field is required."
+              'data.attributes.slug' => [
+                'The data.attributes.slug field is required.'
               ],
-              "data.attributes.type" => [
-                "The data.attributes.type field is required."
+              'data.attributes.type' => [
+                'The data.attributes.type field is required.'
               ]
             ],
-            "status_code" => 422
+            'status_code' => 422
         ];
         // real test
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
@@ -274,7 +274,7 @@ class ApiTest extends TestCase
             ],
             'body' => json_encode([
                 'data' => [],
-            ])
+            ]),
         ])->andReturn($response);
 
         $api = new Api($this->config->toArray(), new NullCache(), $this->client);
