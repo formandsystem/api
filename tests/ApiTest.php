@@ -247,19 +247,19 @@ class ApiTest extends TestCase
             'message' => 'Request data validation failed.',
             'errors'  => [
               'data.type' => [
-                'The data.type field is required.'
+                'The data.type field is required.',
               ],
               'data.attributes.name' => [
-                'The data.attributes.name field is required.'
+                'The data.attributes.name field is required.',
               ],
               'data.attributes.slug' => [
-                'The data.attributes.slug field is required.'
+                'The data.attributes.slug field is required.',
               ],
               'data.attributes.type' => [
-                'The data.attributes.type field is required.'
+                'The data.attributes.type field is required.',
               ]
             ],
-            'status_code' => 422
+            'status_code' => 422,
         ];
         // real test
         $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
