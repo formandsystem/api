@@ -7,16 +7,33 @@ use PHPUnit\Framework\TestCase;
 
 class ApiTest extends TestCase
 {
-    protected $token;
+    protected $token = '123456789';
+    protected $headers = [
+        'Accept'        => 'application/json',
+        'Authorization' => 'Bearer 123456789',
+    ];
     protected $config;
     protected $client;
     protected $response;
+    protected $api;
+    protected $data = [
+        'success' => [
+            'data' => [
+                'id' => 1234,
+            ],
+        ],
+        'error'  => [
+            'error' => [
+                'message'     => 'Check your client id and client secret or you access token.',
+                'status_code' => 403,
+            ],
+        ],
+    ];
 
     public function setUp()
     {
-        $this->token = '123456789';
         $this->client = Mockery::mock('GuzzleHttp\Client');
-
+        // setup config
         $this->config = new Config([
             'url'           => 'http://api.formandsystem.com',
             'version'       => 1,
@@ -25,6 +42,16 @@ class ApiTest extends TestCase
             'cache'         => false,
             'scopes'        => ['content.get'],
         ]);
+        // setup default api
+        $this->api = new Api($this->config->toArray(), new NullCache(), $this->client);
+    }
+
+    public function response($type = 'success')
+    {
+        return Mockery::mock('Psr\Http\Message\ResponseInterface')
+            ->shouldReceive('getBody')
+            ->times(1)
+            ->andReturn(json_encode($this->data[$type]))->getMock();
     }
 
     public function tearDown()
@@ -60,88 +87,53 @@ class ApiTest extends TestCase
 
     public function testInitApi()
     {
-        $api = new Api($this->config->toArray(), new NullCache(), new GuzzleHttp\Client([
-            'exceptions' => false,
-        ]));
-
-        $this->assertInstanceOf(Api::class, $api);
+        $this->assertInstanceOf(Api::class, $this->api);
     }
 
     public function testAccessToken()
     {
         // Mock API Token stuff
         $this->apiToken();
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode([
-            'data' => [],
-        ]));
         // real test
-        $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/testToGetToken', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->token,
-            ],
-        ])->andReturn($response);
+        $this->client->shouldReceive('get')->times(1)->with($this->config->url.'/testToGetToken', [
+            'headers' => $this->headers,
+        ])->andReturn($this->response('success'));
 
-        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
-        $api->get('/testToGetToken');
+        $result = $this->api->get('/testToGetToken');
+        $this->assertSame($result, $this->data['success']);
     }
 
     public function testAccessTokenCacheDifferentScope()
     {
         // Mock API Token stuff
         $this->apiToken();
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode([
-            'data' => [],
-        ]));
-        $cache = Mockery::mock('Formandsystem\Api\Interfaces\Cache');
-        $cache->shouldIgnoreMissing();
-        $cache->shouldReceive('has')->times(1)->andReturn(true);
-        $cache->shouldReceive('get')->times(1)->with('access_token'.$this->config->client_id)->andReturn([
-            'scopes' => ['client.delete'],
-        ]);
+        // setup Cache mock
+        $cache = Mockery::mock('Formandsystem\Api\Interfaces\Cache')->shouldIgnoreMissing()
+                ->shouldReceive('has')->times(1)->andReturn(true)
+                ->shouldReceive('get')->times(1)->with('access_token'.$this->config->client_id)->andReturn([
+                    'scopes' => ['client.delete'],
+                ])->getMock();
         // real test
-        $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/testToGetToken', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->token,
-            ],
-        ])->andReturn($response);
+        $this->client->shouldReceive('get')->times(1)->with($this->config->url.'/testToGetToken', [
+            'headers' => $this->headers,
+        ])->andReturn($this->response('success'));
 
         $api = new Api($this->config->toArray(), $cache, $this->client);
-        $api->get('/testToGetToken');
+        $result = $api->get('/testToGetToken');
+        $this->assertSame($result, $this->data['success']);
     }
 
     public function testGet()
     {
         // Mock API Token stuff
         $this->apiToken();
-        $responseData['data'] = [
-            'id'         => '12345',
-            'type'       => 'collections',
-            'attributes' => [
-                'name' => 'name',
-                'slug' => 'slug',
-            ],
-        ];
-        // real test
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode(
-            $responseData
-        ));
+        // Mock get request
+        $this->client->shouldReceive('get')->times(1)->with($this->config->url.'/collections', [
+            'headers' => $this->headers,
+        ])->andReturn($this->response('success'));
 
-        $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/collections', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->token,
-            ],
-        ])->andReturn($response);
-
-        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
-        $result = $api->get('/collections');
-
-        $this->assertEquals($responseData, $result);
+        $result = $this->api->get('/collections');
+        $this->assertEquals($this->data['success'], $result);
     }
 
     public function testGetError()
@@ -149,119 +141,30 @@ class ApiTest extends TestCase
         $this->expectException(ErrorException::class);
         // Mock API Token stuff
         $this->apiToken();
-        $responseData['error'] = [
-            'message'     => 'Check your client id and client secret or you access token.',
-            'status_code' => 403,
-        ];
         // real test
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode(
-            $responseData
-        ));
-
         $this->client->shouldReceive('get')->times(1)->with('http://api.formandsystem.com/collections', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->token,
-            ],
-        ])->andReturn($response);
+            'headers' => $this->headers,
+        ])->andReturn($this->response('error'));
 
-        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
-        $result = $api->get('/collections');
+        $result = $this->api->get('/collections');
 
-        $this->assertEquals($responseData, $result);
+        $this->assertEquals($this->data['error'], $result);
     }
 
     public function testPost()
     {
         // Mock API Token stuff
         $this->apiToken();
-        $data = [
-            'type'       => 'collections',
-            'attributes' => [
-                'name' => 'name',
-                'slug' => 'slug',
-                'type' => 'pages',
-            ],
-        ];
-
-        $responseData['data'] = [
-            'type'       => 'collections',
-            'id'         => '110790d5-5179-4332-9c85-c8b03d8d1750',
-            'attributes' => [
-                'name'       => 'name',
-                'slug'       => 'slug',
-                'type'       => 'pages',
-                'position'   => null,
-                'is_trashed' => false,
-            ],
-            'links' => [
-                'self' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750',
-            ],
-            'relationships' => [
-                'pages' => [
-                    'links' => [
-                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/pages',
-                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/pages',
-                    ],
-                    'data' => [
-                    ],
-                ],
-                'ownedByPages' => [
-                    'links' => [
-                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByPages',
-                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByPages',
-                    ],
-                ],
-                'collections' => [
-                    'links' => [
-                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/collections',
-                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/collections',
-                    ],
-                ],
-                'ownedByCollections' => [
-                    'links' => [
-                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByCollections',
-                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByCollections',
-                    ],
-                ],
-                'fragments' => [
-                    'links' => [
-                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/fragments',
-                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/fragments',
-                    ],
-                    'data' => [
-                    ],
-                ],
-                'ownedByFragments' => [
-                    'links' => [
-                        'self'    => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/relationships/ownedByFragments',
-                        'related' => 'http://formandsystem-api.dev/collections/110790d5-5179-4332-9c85-c8b03d8d1750/ownedByFragments',
-                    ],
-                ],
-            ],
-        ];
-
-        // real test
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode(
-            $responseData
-        ));
 
         $this->client->shouldReceive('post')->times(1)->with('http://api.formandsystem.com/collections', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->token,
-            ],
-            'body' => json_encode([
-                'data' => $data,
+            'headers' => $this->headers,
+            'body'    => json_encode([
+                'data' => $this->data['success'],
             ]),
-        ])->andReturn($response);
+        ])->andReturn($this->response('success'));
 
-        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
-        $result = $api->post('/collections', $data);
-
-        $this->assertEquals($responseData, $result);
+        $result = $this->api->post('/collections', $this->data['success']);
+        $this->assertEquals($this->data['success'], $result);
     }
 
     public function testPostError()
@@ -269,43 +172,15 @@ class ApiTest extends TestCase
         $this->expectException(ErrorException::class);
         // Mock API Token stuff
         $this->apiToken();
-        $responseData['error'] = [
-            'message' => 'Request data validation failed.',
-            'errors'  => [
-              'data.type' => [
-                'The data.type field is required.',
-              ],
-              'data.attributes.name' => [
-                'The data.attributes.name field is required.',
-              ],
-              'data.attributes.slug' => [
-                'The data.attributes.slug field is required.',
-              ],
-                'data.attributes.type' => [
-                    'The data.attributes.type field is required.',
-                ],
-            ],
-            'status_code' => 422,
-        ];
-        // real test
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->times(1)->andReturn(json_encode(
-            $responseData
-        ));
 
         $this->client->shouldReceive('post')->times(1)->with('http://api.formandsystem.com/collections', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->token,
-            ],
-            'body' => json_encode([
+            'headers' => $this->headers,
+            'body'    => json_encode([
                 'data' => [],
             ]),
-        ])->andReturn($response);
+        ])->andReturn($this->response('error'));
 
-        $api = new Api($this->config->toArray(), new NullCache(), $this->client);
-        $result = $api->post('/collections', []);
-
-        $this->assertEquals($responseData, $result);
+        $result = $this->api->post('/collections', []);
+        $this->assertEquals($this->data['error'], $result);
     }
 }
