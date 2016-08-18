@@ -3,65 +3,28 @@
 use Formandsystem\Api\Api;
 use Formandsystem\Api\Cache\NullCache;
 use Formandsystem\Api\Config;
-use PHPUnit\Framework\TestCase;
+use Formandsystem\Api\TestBase;
 
-class ApiTest extends TestCase
+class ApiTest extends TestBase
 {
-    protected $token = '123456789';
-    protected $headers = [
-        'Accept'        => 'application/json',
-        'Authorization' => 'Bearer 123456789',
-    ];
-    protected $config;
-    protected $client;
-    protected $response;
-    protected $api;
-    protected $data = [
-        'success' => [
-            'data' => [
-                'id' => 1234,
-            ],
-        ],
-        'error'  => [
-            'error' => [
-                'message'     => 'Check your client id and client secret or you access token.',
-                'status_code' => 403,
-            ],
-        ],
-    ];
-
     public function setUp()
     {
-        $this->client = Mockery::mock('GuzzleHttp\Client');
-        // setup config
-        $this->config = new Config([
-            'url'           => 'http://api.formandsystem.com',
-            'version'       => 1,
-            'client_id'     => '1234-12344-1231231',
-            'client_secret' => '1234-12344-1231231',
-            'cache'         => false,
-            'scopes'        => ['content.get'],
-        ]);
+        parent::setUp();
         // setup default api
         $this->api = new Api($this->config->toArray(), new NullCache(), $this->client);
     }
 
     public function response($type = 'success')
     {
-        return Mockery::mock('Psr\Http\Message\ResponseInterface')
+        return \Mockery::mock('Psr\Http\Message\ResponseInterface')
             ->shouldReceive('getBody')
             ->times(1)
             ->andReturn(json_encode($this->data[$type]))->getMock();
     }
 
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
     public function apiToken()
     {
-        $response = Mockery::mock('Psr\Http\Message\ResponseInterface');
+        $response = \Mockery::mock('Psr\Http\Message\ResponseInterface');
 
         $this->client->shouldReceive('post')->times(1)->with($this->config->url.'/tokens', [
             'headers' => [
@@ -108,10 +71,29 @@ class ApiTest extends TestCase
         // Mock API Token stuff
         $this->apiToken();
         // setup Cache mock
-        $cache = Mockery::mock('Formandsystem\Api\Interfaces\Cache')->shouldIgnoreMissing()
+        $cache = \Mockery::mock('Formandsystem\Api\Cache\CacheInterface')->shouldIgnoreMissing()
                 ->shouldReceive('has')->times(1)->andReturn(true)
                 ->shouldReceive('get')->times(1)->with('access_token'.$this->config->client_id)->andReturn([
                     'scopes' => ['client.delete'],
+                ])->getMock();
+        // real test
+        $this->client->shouldReceive('get')->times(1)->with($this->config->url.'/testToGetToken', [
+            'headers' => $this->headers,
+        ])->andReturn($this->response('success'));
+
+        $api = new Api($this->config->toArray(), $cache, $this->client);
+        $result = $api->get('/testToGetToken');
+        $this->assertSame($result, $this->data['success']);
+    }
+
+    public function testAccessTokenValidCache()
+    {
+        // setup Cache mock
+        $cache = \Mockery::mock('Formandsystem\Api\Cache\CacheInterface')->shouldIgnoreMissing()
+                ->shouldReceive('has')->times(1)->andReturn(true)
+                ->shouldReceive('get')->times(2)->with('access_token'.$this->config->client_id)->andReturn([
+                    'token'  => $this->token,
+                    'scopes' => $this->config->scopes,
                 ])->getMock();
         // real test
         $this->client->shouldReceive('get')->times(1)->with($this->config->url.'/testToGetToken', [

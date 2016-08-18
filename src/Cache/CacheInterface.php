@@ -1,8 +1,8 @@
 <?php
 
-namespace Formandsystem\Api\Interfaces;
+namespace Formandsystem\Api\Cache;
 
-interface Cache
+interface CacheInterface
 {
     /**
      * Determine if an item exists in the cache.

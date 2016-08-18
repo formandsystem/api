@@ -2,8 +2,6 @@
 
 namespace Formandsystem\Api\Cache;
 
-use Formandsystem\Api\Interfaces\Cache as CacheInterface;
-
 class LaravelCache implements CacheInterface
 {
     protected $cache;

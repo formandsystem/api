@@ -2,7 +2,7 @@
 
 namespace Formandsystem\Api;
 
-use Formandsystem\Api\Interfaces\Cache as CacheInterface;
+use Formandsystem\Api\Cache\CacheInterface;
 use GuzzleHttp;
 
 class Api
