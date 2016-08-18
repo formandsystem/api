@@ -183,4 +183,113 @@ class ApiTest extends TestCase
         $result = $this->api->post('/collections', []);
         $this->assertEquals($this->data['error'], $result);
     }
+
+    public function testPatch()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('patch')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+            'body'    => json_encode([
+                'data' => $this->data['success'],
+            ]),
+        ])->andReturn($this->response('success'));
+
+        $result = $this->api->patch('/collections', $this->data['success']);
+        $this->assertEquals($this->data['success'], $result);
+    }
+
+    public function testPatchError()
+    {
+        $this->expectException(ErrorException::class);
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('patch')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+            'body'    => json_encode([
+                'data' => [],
+            ]),
+        ])->andReturn($this->response('error'));
+
+        $result = $this->api->patch('/collections', []);
+        $this->assertEquals($this->data['error'], $result);
+    }
+
+    public function testPut()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('put')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+            'body'    => json_encode([
+                'data' => $this->data['success'],
+            ]),
+        ])->andReturn($this->response('success'));
+
+        $result = $this->api->put('/collections', $this->data['success']);
+        $this->assertEquals($this->data['success'], $result);
+    }
+
+    public function testPutError()
+    {
+        $this->expectException(ErrorException::class);
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('put')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+            'body'    => json_encode([
+                'data' => [],
+            ]),
+        ])->andReturn($this->response('error'));
+
+        $result = $this->api->put('/collections', []);
+        $this->assertEquals($this->data['error'], $result);
+    }
+
+    public function testDelete()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('delete')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+        ])->andReturn($this->response('success'));
+
+        $result = $this->api->delete('/collections');
+        $this->assertEquals($this->data['success'], $result);
+    }
+
+    public function testDeleteWithBody()
+    {
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('delete')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+            'body'    => json_encode([
+                'data' => 'test',
+            ]),
+        ])->andReturn($this->response('success'));
+
+        $result = $this->api->delete('/collections', 'test');
+        $this->assertEquals($this->data['success'], $result);
+    }
+
+    public function testDeleteError()
+    {
+        $this->expectException(ErrorException::class);
+        // Mock API Token stuff
+        $this->apiToken();
+
+        $this->client->shouldReceive('delete')->times(1)->with('http://api.formandsystem.com/collections', [
+            'headers' => $this->headers,
+        ])->andReturn($this->response('error'));
+
+        $result = $this->api->delete('/collections');
+        $this->assertEquals($this->data['error'], $result);
+    }
 }

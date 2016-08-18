@@ -26,7 +26,7 @@
         "test": "phpunit; vendor/bin/php-cs-fixer fix -v --diff --dry-run;",
         "php-fix": "vendor/bin/php-cs-fixer fix -v --diff;",
         "travis": "phpunit --coverage-clover build/logs/clover.xml",
-        "humbug": "vendor/bin/humbug && vendor/bin/humbug stats --skip-killed=yes -vvv"
+        "humbug": "vendor/bin/humbug -vvv --ansi && vendor/bin/humbug stats --skip-killed=yes -vvv --ansi"
     },
     "minimum-stability": "stable",
     "require-dev": {

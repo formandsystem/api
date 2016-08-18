@@ -87,7 +87,7 @@ class Api
         $response = $this->parseResponse($this->client->patch($endpoint, [
             'headers' => array_merge([
                 'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
+                'Authorization' => 'Bearer '.$this->access_token($this->config->scopes),
             ], $headers),
             'body' => json_encode([
                 'data' => $body,
@@ -120,7 +120,7 @@ class Api
         $response = $this->parseResponse($this->client->put($endpoint, [
             'headers' => array_merge([
                 'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
+                'Authorization' => 'Bearer '.$this->access_token($this->config->scopes),
             ], $headers),
             'body' => $body,
         ]));
@@ -145,7 +145,7 @@ class Api
         // prepare data
         $delete_data['headers'] = array_merge([
             'Accept'        => 'application/json',
-            'Authorization' => 'Bearer '.$this->access_token($this->config['scopes']),
+            'Authorization' => 'Bearer '.$this->access_token($this->config->scopes),
         ], []);
         // add body if set
         if ($body !== false) {
