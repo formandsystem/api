@@ -7,14 +7,19 @@ use GuzzleHttp;
 
 class Api
 {
-    public function __construct(array $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient)
+
+    protected $config;
+    protected $cache;
+    protected $client;
+
+    public function __construct(array $config, CacheInterface $cache, GuzzleHttp\Client $guzzleClient = null)
     {
         // merge config data
         $this->config = new Config($config);
         // get cache implementation
         $this->cache = $cache;
         // get cache implementation
-        $this->client = $guzzleClient;
+        $this->client = isset($guzzleClient) ? $guzzleClient : new GuzzleHttp\Client();
     }
 
     /**
