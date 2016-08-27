@@ -27,7 +27,7 @@
         "travis": "phpunit --coverage-clover build/logs/clover.xml",
         "humbug": "vendor/bin/humbug -vvv --ansi && vendor/bin/humbug stats --skip-killed=yes -vvv --ansi"
     },
-    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require-dev": {
         "fzaninotto/faker": "~1.0",
         "mockery/mockery": "0.9.*@dev",
