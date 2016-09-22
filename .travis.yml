@@ -8,8 +8,6 @@ matrix:
     - php: 7.0
       env:
         - EXECUTE_COVERAGE=true
-  allow_failures:
-    - php: 7.0
   fast_finish: true
 
 cache:
@@ -17,7 +15,7 @@ cache:
     - $HOME/.composer/cache
 
 install:
-  - travis_retry composer install --prefer-dist
+  - travis_retry composer install --prefer-dist --no-suggest --no-interaction
 
 script:
   - mkdir -p build/logs
