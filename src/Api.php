@@ -7,7 +7,6 @@ use GuzzleHttp;
 
 class Api
 {
-
     protected $config;
     protected $cache;
     protected $client;

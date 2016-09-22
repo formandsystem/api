@@ -69,11 +69,11 @@ class ApiTest extends TestBase
     public function testFallbackGuzzleIsUsed()
     {
         $api = new Api($this->config->toArray(), new NullCache());
-        $reflector = new ReflectionClass( Api::class );
-        $property = $reflector->getProperty( 'client' );
-        $property->setAccessible( true );
-        
-        $this->assertInstanceOf('GuzzleHttp\Client', $property->getValue( $api ));
+        $reflector = new ReflectionClass(Api::class);
+        $property = $reflector->getProperty('client');
+        $property->setAccessible(true);
+
+        $this->assertInstanceOf('GuzzleHttp\Client', $property->getValue($api));
     }
 
     public function testAccessTokenCacheDifferentScope()
